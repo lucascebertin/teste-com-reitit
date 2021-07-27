@@ -1,0 +1,9 @@
+{:webserver {:port 3000}
+ :env :dev
+ :database {:dbtype "postgresql"
+            :dbname "todo"
+            :username "user"
+            :password "root"
+            :host "127.0.0.1"
+            :port 5432}}
+

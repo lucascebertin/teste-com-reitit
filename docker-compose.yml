@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:10.7-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: todo
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: root
+
+  db_admin:
+    image: dpage/pgadmin4:5.1
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - '8081:80'
+    depends_on:
+      - db
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: clojure-reitit:dev
+    environment:
+      ENV: prod
+      DATABASE: "{:dbtype \"postgresql\" :dbname \"todo\" :username \"user\" :password \"root\" :host \"db\" :port 5432}"
+    ports:
+      - '3000:3000'
+    depends_on:
+      - migrations
+
+  migrations:
+    build:
+      dockerfile: Dockerfile.migrations
+      context: .
+    image: clojure-reitit-migrations:dev
+    environment:
+      DB_SUBNAME: "//db/todo"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: user
+      DB_PASSWORD: root
+ 

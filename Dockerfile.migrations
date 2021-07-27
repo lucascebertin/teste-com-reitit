@@ -1,0 +1,12 @@
+FROM clojure:openjdk-11-lein-slim-buster as builder
+
+WORKDIR /usr/src/app
+
+# install main deps, sometimes change
+COPY project.clj .
+RUN lein deps
+
+COPY resources/ /usr/src/app/resources
+COPY src/ /usr/src/app/src
+
+CMD lein migratus
